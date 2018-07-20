@@ -1,0 +1,40 @@
+{
+  "name": "alphormjs",
+  "version": "0.0.1",
+  "description": "Alphorm node modules",
+  "main": "index.js",
+  "scripts": {
+    "dev": "watch \"npm run build\" src",
+    "build": "babel src -d build",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "babel": {
+    "presets": [
+      "latest"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alphormcom/AlphormJS.git"
+  },
+  "keywords": [
+    "pdf",
+    "bills"
+  ],
+  "author": "Alphorm",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Alphormcom/AlphormJS/issues"
+  },
+  "homepage": "https://github.com/Alphormcom/AlphormJS#readme",
+  "dependencies": {
+    "pdfkit": "^0.8.3"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-latest": "^6.24.1",
+    "jest": "^23.4.1",
+    "watch": "^1.0.2"
+  }
+}
