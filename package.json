@@ -28,13 +28,13 @@
     "url": "https://github.com/Alphormcom/AlphormJS/issues"
   },
   "homepage": "https://github.com/Alphormcom/AlphormJS#readme",
-  "dependencies": {
-    "pdfkit": "^0.8.3"
-  },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-latest": "^6.24.1",
     "jest": "^23.4.1",
     "watch": "^1.0.2"
+  },
+  "dependencies": {
+    "pdfmake": "^0.1.37"
   }
 }
