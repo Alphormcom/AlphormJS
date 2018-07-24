@@ -2,6 +2,8 @@
 import pdfFonts from 'pdfmake/build/vfs_fonts'
 pdfMake.vfs = pdfFonts.pdfMake.vfs
 export const billGenerator = (content, destination, attributes) => {
+  let DataItems = content.Items.map((item) => [item.Description, (item.Quantity ? item.Quantity : '1'), item.PriceExcludingVat, item.TotalPrice])
+  let tableRows = []
   let docBlob = null
   let docDefinition = {
     pageSize: 'A4',
@@ -15,17 +17,42 @@ export const billGenerator = (content, destination, attributes) => {
           headerRows: 1,
           widths: ['*', 35, 60, 100],
           body: [
-            [{ text: 'Article', style: 'tableHeader' }, { text: 'Qté', style: 'tableHeader' }, { text: 'P.U HT (€)', style: 'tableHeader' }, { text: 'Montant HT (€)', style: 'tableHeader' }],
-            [{
-              ul: content.items.map(item => item.description)
-            },
-            content.items.map(item => item.quatity ? item.quatity : '1'),
-            content.items.map(item => item.PriceExcludingVat),
-            content.items.map(item => item.PriceExcludingVat * (item.quatity ? item.quatity : '1'))
+            [
+              { text: 'Article', style: 'tableHeader' },
+              { text: 'Qté', style: 'tableHeader' },
+              { text: `P.U HT (${content.Currency === 'EUR' ? '€' : content.Currency})`, style: 'tableHeader' },
+              { text: `Montant HT (${content.Currency === 'EUR' ? '€' : content.Currency})`, style: 'tableHeader' }],
+            [
+              {
+                ul: content.Items.map(item => item.Description)
+              },
+              {
+                ul: content.Items.map(item => item.Quantity ? item.Quantity : '1')
+              },
+              {
+                ul: content.Items.map(item => item.PriceExcludingVat)
+              },
+              {
+                ul: content.Items.map(item => item.TotalPrice)
+              }
             ],
-            [{ text: '', border: [false, false, false, false] }, { colSpan: 2, rowSpan: 1, text: 'Total HT', style: 'tableHeader' }, '', parseFloat(content.totalPrice).toFixed(2)],
-            [{ text: '', border: [false, false, false, false] }, { colSpan: 2, rowSpan: 1, text: 'Total TVA (20%)', style: 'tableHeader' }, '', parseFloat(content.totalPrice).toFixed(2)],
-            [{ text: '', border: [false, false, false, false] }, { colSpan: 2, rowSpan: 1, text: 'Total TTC (€)', style: 'tableHeader' }, '', parseFloat(content.totalPrice).toFixed(2)]
+            [
+              { text: '', border: [false, false, false, false] },
+              { colSpan: 2, rowSpan: 1, text: 'Total HT', style: 'tableHeader' },
+              '',
+              parseFloat(content.PriceExcludingVat).toFixed(2)
+            ],
+            [
+              { text: '', border: [false, false, false, false] },
+              { colSpan: 2, rowSpan: 1, text: 'Total TVA (20%)', style: 'tableHeader' },
+              '',
+              parseFloat(content.VatAmount).toFixed(2)
+            ],
+            [
+              { text: '', border: [false, false, false, false] },
+              { colSpan: 2, rowSpan: 1, text: `Total TTC (${content.Currency === 'EUR' ? '€' : content.Currency})`, style: 'tableHeader' },
+              '',
+              parseFloat(content.TotalPrice).toFixed(2) + content.Currency]
           ]
         }
       }
