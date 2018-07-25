@@ -49,7 +49,9 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
     return [item.Description, item.Quantity ? item.Quantity : '1', item.PriceExcludingVat, item.TotalPrice];
   });
   var docBlob = null;
-
+  var checkNullProperty = function checkNullProperty(property) {
+    return property === null ? property : '';
+  };
   var attributes = {
     size: 'A4',
     title: content.OrderNumber,
@@ -122,7 +124,7 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
             return 0;
           }
         }], [{
-          text: (content.BillingAddress.Company === null ? '' : content.BillingAddress.Company) + '\n                ' + (content.BillingAddress.AddressLine1 === null ? '' : content.BillingAddress.AddressLine1) + '\n                ' + (content.BillingAddress.AddressLine2 === null ? '' : content.BillingAddress.AddressLine2) + '\n                ' + ((content.BillingAddress.PostalCode === null ? '' : content.BillingAddress.PostalCode) + ' ' + (content.BillingAddress.City === null ? '' : content.BillingAddress.City) + (content.BillingAddress.Country === null ? '' : content.BillingAddress.Country)),
+          text: checkNullProperty(content.BillingAddress.Company) + '\n                     ' + checkNullProperty(content.BillingAddress.AddressLine1) + '\n                     ' + checkNullProperty(content.BillingAddress.AddressLine2) + '\n                     ' + checkNullProperty(content.BillingAddress.PostalCode) + ' ' + checkNullProperty(content.BillingAddress.City) + '\n                     ' + checkNullProperty(content.BillingAddress.State) + ' ' + checkNullProperty(content.BillingAddress.Country),
           fontSize: 10,
           border: [false, false, false, false],
           margin: [0, 0, 0, 0],
@@ -139,7 +141,7 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
             return 0;
           }
         }], [{
-          text: 'Email : ' + content.User.Email,
+          text: 'Email : ' + checkNullProperty(content.User.Email),
           fontSize: 10,
           border: [false, false, false, false],
           margin: [0, 0, 0, 0],
@@ -156,7 +158,7 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
             return 0;
           }
         }], [{
-          text: (content.User.Phone === null ? '' : 'Téléphone : ' + content.User.Phone) + ' ',
+          text: 'Téléphone : ' + checkNullProperty(content.User.Phone) + ' ',
           fontSize: 10,
           border: [false, false, false, false],
           margin: [0, 0, 0, 0],
