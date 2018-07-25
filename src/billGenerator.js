@@ -1,6 +1,7 @@
 ﻿import Moment from 'moment'
 import pdfMake from 'pdfmake/build/pdfmake'
 import pdfFonts from 'pdfmake/build/vfs_fonts'
+import {checkNullProperty} from './Helpers'
 import { logo } from './logo'
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs
@@ -25,7 +26,6 @@ export const billGenerator = (content, destination, method) => {
 
   let DataItems = content.Items.map((item) => [item.Description, (item.Quantity ? item.Quantity : '1'), item.PriceExcludingVat, item.TotalPrice])
   let docBlob = null
-  const checkNullProperty = (property) => !property ? '' : property
   let attributes = {
     size: 'A4',
     title: content.OrderNumber,
@@ -97,33 +97,18 @@ export const billGenerator = (content, destination, method) => {
                      ${checkNullProperty(content.BillingAddress.AddressLine2)}
                      ${checkNullProperty(content.BillingAddress.PostalCode)} ${checkNullProperty(content.BillingAddress.City)}
                      ${checkNullProperty(content.BillingAddress.State)} ${checkNullProperty(content.BillingAddress.Country)}`,
-              fontSize: 10,
-              border: [false, false, false, false],
-              margin: [0, 0, 0, 0],
-              paddingLeft: () => 0,
-              paddingTop: () => 0,
-              paddingRight: () => 0,
-              paddingBottom: () => 0
+              style: 'UserContactInfo',
+              border: [false, false, false, false]
             }],
             [{
-              text: `Email : ${checkNullProperty(content.User.Email)}`,
-              fontSize: 10,
-              border: [false, false, false, false],
-              margin: [0, 0, 0, 0],
-              paddingLeft: () => 0,
-              paddingTop: () => 0,
-              paddingRight: () => 0,
-              paddingBottom: () => 0
+              text: `Email: ${checkNullProperty(content.User.Email)}`,
+              style: 'UserContactInfo',
+              border: [false, false, false, false]
             }],
             [{
-              text: `${'Téléphone : ' + checkNullProperty(content.User.Phone)} `,
-              fontSize: 10,
-              border: [false, false, false, false],
-              margin: [0, 0, 0, 0],
-              paddingLeft: () => 0,
-              paddingTop: () => 0,
-              paddingRight: () => 0,
-              paddingBottom: () => 0
+              text: `Téléphone : ${checkNullProperty(content.User.Phone)} `,
+              style: 'UserContactInfo',
+              border: [false, false, false, false]
             }]
           ]
         }
@@ -204,6 +189,14 @@ export const billGenerator = (content, destination, method) => {
         fontSize: 7,
         margin: [60, 0, 60, 0],
         alignment: 'center'
+      },
+      'UserContactInfo': {
+        fontSize: 10,
+        margin: [0, 0, 0, 0],
+        paddingLeft: () => 0,
+        paddingTop: () => 0,
+        paddingRight: () => 0,
+        paddingBottom: () => 0
       }
     }
   }
@@ -220,7 +213,6 @@ export const billGenerator = (content, destination, method) => {
     case methodes.BUFFER:
       pdfMake.createPdf(docDefinition).getDataUrl(function (result) {
         docBlob = result
-        console.log(docBlob)
         return docBlob
       })
       break

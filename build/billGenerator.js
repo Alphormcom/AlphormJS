@@ -19,6 +19,8 @@ var _vfs_fonts = require('pdfmake/build/vfs_fonts');
 
 var _vfs_fonts2 = _interopRequireDefault(_vfs_fonts);
 
+var _Helpers = require('./Helpers');
+
 var _logo = require('./logo');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -49,9 +51,6 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
     return [item.Description, item.Quantity ? item.Quantity : '1', item.PriceExcludingVat, item.TotalPrice];
   });
   var docBlob = null;
-  var checkNullProperty = function checkNullProperty(property) {
-    return !property ? '' : property;
-  };
   var attributes = {
     size: 'A4',
     title: content.OrderNumber,
@@ -124,56 +123,17 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
             return 0;
           }
         }], [{
-          text: checkNullProperty(content.BillingAddress.Company) + '\n                     ' + checkNullProperty(content.BillingAddress.AddressLine1) + '\n                     ' + checkNullProperty(content.BillingAddress.AddressLine2) + '\n                     ' + checkNullProperty(content.BillingAddress.PostalCode) + ' ' + checkNullProperty(content.BillingAddress.City) + '\n                     ' + checkNullProperty(content.BillingAddress.State) + ' ' + checkNullProperty(content.BillingAddress.Country),
-          fontSize: 10,
-          border: [false, false, false, false],
-          margin: [0, 0, 0, 0],
-          paddingLeft: function paddingLeft() {
-            return 0;
-          },
-          paddingTop: function paddingTop() {
-            return 0;
-          },
-          paddingRight: function paddingRight() {
-            return 0;
-          },
-          paddingBottom: function paddingBottom() {
-            return 0;
-          }
+          text: (0, _Helpers.checkNullProperty)(content.BillingAddress.Company) + '\n                     ' + (0, _Helpers.checkNullProperty)(content.BillingAddress.AddressLine1) + '\n                     ' + (0, _Helpers.checkNullProperty)(content.BillingAddress.AddressLine2) + '\n                     ' + (0, _Helpers.checkNullProperty)(content.BillingAddress.PostalCode) + ' ' + (0, _Helpers.checkNullProperty)(content.BillingAddress.City) + '\n                     ' + (0, _Helpers.checkNullProperty)(content.BillingAddress.State) + ' ' + (0, _Helpers.checkNullProperty)(content.BillingAddress.Country),
+          style: 'UserContactInfo',
+          border: [false, false, false, false]
         }], [{
-          text: 'Email : ' + checkNullProperty(content.User.Email),
-          fontSize: 10,
-          border: [false, false, false, false],
-          margin: [0, 0, 0, 0],
-          paddingLeft: function paddingLeft() {
-            return 0;
-          },
-          paddingTop: function paddingTop() {
-            return 0;
-          },
-          paddingRight: function paddingRight() {
-            return 0;
-          },
-          paddingBottom: function paddingBottom() {
-            return 0;
-          }
+          text: 'Email: ' + (0, _Helpers.checkNullProperty)(content.User.Email),
+          style: 'UserContactInfo',
+          border: [false, false, false, false]
         }], [{
-          text: 'Téléphone : ' + checkNullProperty(content.User.Phone) + ' ',
-          fontSize: 10,
-          border: [false, false, false, false],
-          margin: [0, 0, 0, 0],
-          paddingLeft: function paddingLeft() {
-            return 0;
-          },
-          paddingTop: function paddingTop() {
-            return 0;
-          },
-          paddingRight: function paddingRight() {
-            return 0;
-          },
-          paddingBottom: function paddingBottom() {
-            return 0;
-          }
+          text: 'T\xE9l\xE9phone : ' + (0, _Helpers.checkNullProperty)(content.User.Phone) + ' ',
+          style: 'UserContactInfo',
+          border: [false, false, false, false]
         }]]
       }
     }, {
@@ -226,6 +186,22 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
         fontSize: 7,
         margin: [60, 0, 60, 0],
         alignment: 'center'
+      },
+      'UserContactInfo': {
+        fontSize: 10,
+        margin: [0, 0, 0, 0],
+        paddingLeft: function paddingLeft() {
+          return 0;
+        },
+        paddingTop: function paddingTop() {
+          return 0;
+        },
+        paddingRight: function paddingRight() {
+          return 0;
+        },
+        paddingBottom: function paddingBottom() {
+          return 0;
+        }
       }
     }
   };
@@ -242,7 +218,6 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
     case methodes.BUFFER:
       _pdfmake2.default.createPdf(docDefinition).getDataUrl(function (result) {
         docBlob = result;
-        console.log(docBlob);
         return docBlob;
       });
       break;
