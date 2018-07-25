@@ -5,6 +5,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.billGenerator = undefined;
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _moment = require('moment');
 
 var _moment2 = _interopRequireDefault(_moment);
@@ -25,11 +27,32 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 _pdfmake2.default.vfs = _vfs_fonts2.default.pdfMake.vfs;
 
-var billGenerator = exports.billGenerator = function billGenerator(content, destination, attributes) {
+var billGenerator = exports.billGenerator = function billGenerator(content, destination, method) {
+  if ((typeof content === 'undefined' ? 'undefined' : _typeof(content)) !== 'object') {
+    var error = { error: 'Content must be an object' };
+    throw error;
+  } else if (typeof destination !== 'string') {
+    var _error = { error: 'Destination must be a string' };
+    throw _error;
+  } else if (typeof method !== 'string') {
+    var _error2 = { error: 'output Method must be a string' };
+    throw _error2;
+  }
+
   var DataItems = content.Items.map(function (item) {
     return [item.Description, item.Quantity ? item.Quantity : '1', item.PriceExcludingVat, item.TotalPrice];
   });
   var docBlob = null;
+
+  var attributes = {
+    size: 'A4',
+    title: content.OrderNumber,
+    author: 'Alphard Technology',
+    subject: 'Facture',
+    creationDate: (0, _moment2.default)(content.IssueDate).format('YYYY-MM-DD'),
+    footer: 'Alphard Technologies 9 Charles Fourier, Evry 91030 | T\xE9l : +33 (0)1 77 62 45 80 | E-mail: contact@alphorm.com | www.alphorm.com\n             Siret : 53046978200011 - Naf : 6203Z - N\xB0 TVA intracom : FR04530469782 - Capital : 21 000,00 \u20AC - N\xB0 D\xE9claration : 11 91 07268 91'
+  };
+
   var docDefinition = {
     pageSize: 'A4',
     pageOrientation: 'portrait',
@@ -46,7 +69,7 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
         table: {
           widths: [80, 80],
           margin: [80, 80, 80, 80],
-          body: [[{ text: 'Facture', style: 'label', border: [true, true, false, true] }, { text: content.OrderNumber, style: 'label', border: [false, true, true, true], borderRadius: [50, 50, 50, 50] }], [{ text: 'Date Facturation:', style: 'issueDate', border: [false, false, false, false] }, { text: (0, _moment2.default)(content.IssueDate).format('L'), style: 'issueDate', border: [false, false, false, false] }]]
+          body: [[{ text: 'Facture', style: 'label', border: [true, true, false, true] }, { text: content.OrderNumber, style: 'label', border: [false, true, true, true], borderRadius: [50, 50, 50, 50] }], [{ text: 'Date Facturation:', style: 'issueDate', border: [false, false, false, false] }, { text: (0, _moment2.default)(content.IssueDate).format('L'), style: 'issueDate', border: [false, false, false, false] }], [{ text: 'Méthode  :', style: 'paymentMethod', border: [false, false, false, false] }, { text: content.PaymentMethod, style: 'paymentMethod', border: [false, false, false, false] }]]
         },
         layout: {
           vLineWidth: function vLineWidth() {
@@ -74,16 +97,26 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
     }, {
       margin: [18, 0, 0, 0],
       table: {
-        body: [[{ text: 'par Alphard Technologies SARL\n 9, rue Charles Fourier\n 91030 Evry', border: [false, false, false, false], bold: true }], [{ text: 'Client :', border: [false, false, false, false], bold: true, fontSize: 14, decoration: 'underline', paddingTop: function paddingTop() {
-            return 8;
-          }, marginTop: 10 }], [{
+        body: [[{ text: 'par Alphard Technologies SARL\n 9, rue Charles Fourier\n 91030 Evry', border: [false, false, false, false], bold: true }], [{ text: 'Client :', border: [false, false, false, false], bold: true, fontSize: 14, decoration: 'underline', marginTop: 10 }], [{
           text: '' + (content.User.LastName + ' ' + content.User.FirstName),
           bold: true,
-          fontSize: 14,
+          fontSize: 12,
           border: [false, false, false, false],
-          margin: [0, 0, 0, 0]
+          margin: [0, 0, 0, 0],
+          paddingLeft: function paddingLeft() {
+            return 0;
+          },
+          paddingTop: function paddingTop() {
+            return 0;
+          },
+          paddingRight: function paddingRight() {
+            return 0;
+          },
+          paddingBottom: function paddingBottom() {
+            return 0;
+          }
         }], [{
-          text: '\n                ' + content.BillingAddress.Company + '\n\n                ' + content.BillingAddress.AddressLine1 + '\n\n                ' + (content.BillingAddress.AddressLine2 === null ? content.BillingAddress.PostalCode + ' ' + content.BillingAddress.City + ', ' + content.BillingAddress.Country : content.BillingAddress.AddressLine2),
+          text: content.BillingAddress.Company + '\n                ' + content.BillingAddress.AddressLine1 + '\n                ' + content.BillingAddress.AddressLine2 + '\n                ' + (content.BillingAddress.PostalCode + ' ' + content.BillingAddress.City + ', ' + content.BillingAddress.Country),
           fontSize: 10,
           border: [false, false, false, false],
           margin: [0, 0, 0, 0],
@@ -117,7 +150,7 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
             return 0;
           }
         }], [{
-          text: (content.User.Phone === null ? '' : 'Téléphone :' + content.User.Phone) + ' ',
+          text: (content.User.Phone === null ? '' : 'Téléphone : ' + content.User.Phone) + ' ',
           fontSize: 10,
           border: [false, false, false, false],
           margin: [0, 0, 0, 0],
@@ -175,6 +208,9 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
         fontSize: 10,
         bold: true
       },
+      paymentMethod: {
+        fontSize: 9
+      },
       pageStyle: {
         margin: [15, 15, 15, 15]
       },
@@ -184,34 +220,17 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
         alignment: 'center'
       }
     }
-    // let doc = new PDFDocument({
-    //   Size: attributes.size,
-    //   Title: attributes.title,
-    //   Author: attributes.author,
-    //   Subject: attributes.subject,
-    //   CreationDate: attributes.creationDate,
-    //   ModDate: attributes.creationDate
-    // })
-    // pdfMake.createPdf(content).download(`${destination}.pdf`)
-    // doc.pipe(fs.createWriteStream(`/bill/${destination}.pdf`))
-    // doc.font('Fira Code')
-    //   .fontSize(18)
-    //   .text(content.title, 100, 100)
-    // doc.addPage()
-    // doc.rect(100, 120, 250, 250)
-    // doc.fillColor('red')
+  };
 
-    // doc.end()
-  };if (attributes.do === 'download') {
+  if (method === 'download') {
     _pdfmake2.default.createPdf(docDefinition).download(destination + '.pdf');
-  } else if (attributes.do === 'view') {
+  } else if (method === 'view') {
     _pdfmake2.default.createPdf(docDefinition).open({}, window);
-  } else if (attributes.do === 'print') {
+  } else if (method === 'print') {
     _pdfmake2.default.createPdf(docDefinition).print(destination + '.pdf');
-  } else if (attributes.do === 'buffer') {
+  } else if (method === 'buffer') {
     _pdfmake2.default.createPdf(docDefinition).getDataUrl(function (result) {
       docBlob = result;
-      console.log(docBlob);
     });
   } else {
     console.error('Method undefined');

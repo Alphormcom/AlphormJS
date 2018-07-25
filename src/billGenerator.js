@@ -5,9 +5,31 @@ import { logo } from './logo'
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs
 
-export const billGenerator = (content, destination, attributes) => {
+export const billGenerator = (content, destination, method) => {
+  if (typeof content !== 'object') {
+    let error = {error: 'Content must be an object'}
+    throw error
+  } else if (typeof destination !== 'string') {
+    let error = {error: 'Destination must be a string'}
+    throw error
+  } else if (typeof method !== 'string') {
+    let error = {error: 'output Method must be a string'}
+    throw error
+  }
+
   let DataItems = content.Items.map((item) => [item.Description, (item.Quantity ? item.Quantity : '1'), item.PriceExcludingVat, item.TotalPrice])
   let docBlob = null
+
+  let attributes = {
+    size: 'A4',
+    title: content.OrderNumber,
+    author: 'Alphard Technology',
+    subject: 'Facture',
+    creationDate: Moment(content.IssueDate).format('YYYY-MM-DD'),
+    footer: `Alphard Technologies 9 Charles Fourier, Evry 91030 | Tél : +33 (0)1 77 62 45 80 | E-mail: contact@alphorm.com | www.alphorm.com
+             Siret : 53046978200011 - Naf : 6203Z - N° TVA intracom : FR04530469782 - Capital : 21 000,00 € - N° Déclaration : 11 91 07268 91`
+  }
+
   let docDefinition = {
     pageSize: 'A4',
     pageOrientation: 'portrait',
@@ -29,7 +51,8 @@ export const billGenerator = (content, destination, attributes) => {
               margin: [80, 80, 80, 80],
               body: [
                 [{ text: 'Facture', style: 'label', border: [true, true, false, true] }, { text: content.OrderNumber, style: 'label', border: [false, true, true, true], borderRadius: [50, 50, 50, 50] }],
-                [{ text: 'Date Facturation:', style: 'issueDate', border: [false, false, false, false] }, { text: Moment(content.IssueDate).format('L'), style: 'issueDate', border: [false, false, false, false] }]
+                [{ text: 'Date Facturation:', style: 'issueDate', border: [false, false, false, false] }, { text: Moment(content.IssueDate).format('L'), style: 'issueDate', border: [false, false, false, false] }],
+                [{ text: 'Méthode  :', style: 'paymentMethod', border: [false, false, false, false] }, { text: content.PaymentMethod, style: 'paymentMethod', border: [false, false, false, false] }]
               ]
             },
             layout: {
@@ -50,19 +73,23 @@ export const billGenerator = (content, destination, attributes) => {
         table: {
           body: [
             [{ text: 'par Alphard Technologies SARL\n 9, rue Charles Fourier\n 91030 Evry', border: [false, false, false, false], bold: true }],
-            [{ text: 'Client :', border: [false, false, false, false], bold: true, fontSize: 14, decoration: 'underline', paddingTop: () => 8, marginTop: 10 }],
+            [{ text: 'Client :', border: [false, false, false, false], bold: true, fontSize: 14, decoration: 'underline', marginTop: 10 }],
             [{
               text: `${content.User.LastName + ' ' + content.User.FirstName}`,
               bold: true,
-              fontSize: 14,
+              fontSize: 12,
               border: [false, false, false, false],
-              margin: [0, 0, 0, 0]
+              margin: [0, 0, 0, 0],
+              paddingLeft: () => 0,
+              paddingTop: () => 0,
+              paddingRight: () => 0,
+              paddingBottom: () => 0
             }],
             [{
-              text: `
-                ${content.BillingAddress.Company}\n
-                ${content.BillingAddress.AddressLine1}\n
-                ${content.BillingAddress.AddressLine2 === null ? (content.BillingAddress.PostalCode + ' ' + content.BillingAddress.City + ', ' + content.BillingAddress.Country) : content.BillingAddress.AddressLine2}`,
+              text: `${content.BillingAddress.Company}
+                ${content.BillingAddress.AddressLine1}
+                ${content.BillingAddress.AddressLine2}
+                ${(content.BillingAddress.PostalCode + ' ' + content.BillingAddress.City + ', ' + content.BillingAddress.Country)}`,
               fontSize: 10,
               border: [false, false, false, false],
               margin: [0, 0, 0, 0],
@@ -82,7 +109,7 @@ export const billGenerator = (content, destination, attributes) => {
               paddingBottom: () => 0
             }],
             [{
-              text: `${content.User.Phone === null ? '' : 'Téléphone :' + content.User.Phone} `,
+              text: `${content.User.Phone === null ? '' : 'Téléphone : ' + content.User.Phone} `,
               fontSize: 10,
               border: [false, false, false, false],
               margin: [0, 0, 0, 0],
@@ -160,6 +187,9 @@ export const billGenerator = (content, destination, attributes) => {
         fontSize: 10,
         bold: true
       },
+      paymentMethod: {
+        fontSize: 9
+      },
       pageStyle: {
         margin: [15, 15, 15, 15]
       },
@@ -170,34 +200,16 @@ export const billGenerator = (content, destination, attributes) => {
       }
     }
   }
-  // let doc = new PDFDocument({
-  //   Size: attributes.size,
-  //   Title: attributes.title,
-  //   Author: attributes.author,
-  //   Subject: attributes.subject,
-  //   CreationDate: attributes.creationDate,
-  //   ModDate: attributes.creationDate
-  // })
-  // pdfMake.createPdf(content).download(`${destination}.pdf`)
-  // doc.pipe(fs.createWriteStream(`/bill/${destination}.pdf`))
-  // doc.font('Fira Code')
-  //   .fontSize(18)
-  //   .text(content.title, 100, 100)
-  // doc.addPage()
-  // doc.rect(100, 120, 250, 250)
-  // doc.fillColor('red')
 
-  // doc.end()
-  if (attributes.do === 'download') {
+  if (method === 'download') {
     pdfMake.createPdf(docDefinition).download(`${destination}.pdf`)
-  } else if (attributes.do === 'view') {
+  } else if (method === 'view') {
     pdfMake.createPdf(docDefinition).open({}, window)
-  } else if (attributes.do === 'print') {
+  } else if (method === 'print') {
     pdfMake.createPdf(docDefinition).print(`${destination}.pdf`)
-  } else if (attributes.do === 'buffer') {
+  } else if (method === 'buffer') {
     pdfMake.createPdf(docDefinition).getDataUrl(function (result) {
       docBlob = result
-      console.log(docBlob)
     })
   } else {
     console.error('Method undefined')
