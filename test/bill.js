@@ -28,9 +28,9 @@ const content = {
     'AddressLine2': null,
     'City': 'RABAT',
     'CountryId': 0,
-    'Country': null,
-    'PostalCode': null,
-    'State': null,
+    'Country': 'France',
+    'PostalCode': 27182,
+    'State': 'Grand Casablanca',
     'AddressTypeId': 0
   },
   'PriceExcludingVat': 0,
@@ -38,6 +38,30 @@ const content = {
   'TotalPrice': 400,
   'Currency': 'EUR',
   'Items': [
+    {
+      'Description': 'VMware vSphere 5 : Savoir installer, configurer et administrer',
+      'PriceExcludingVat': 176,
+      'VatAmount': 0,
+      'TotalPrice': 176
+    },
+    {
+      'Description': 'VMware Mirage 3.6 : Savoir installer, configurer et administrer',
+      'PriceExcludingVat': 144,
+      'VatAmount': 0,
+      'TotalPrice': 144
+    },
+    {
+      'Description': 'VMware vSphere 5 : Savoir installer, configurer et administrer',
+      'PriceExcludingVat': 176,
+      'VatAmount': 0,
+      'TotalPrice': 176
+    },
+    {
+      'Description': 'VMware Mirage 3.6 : Savoir installer, configurer et administrer',
+      'PriceExcludingVat': 144,
+      'VatAmount': 0,
+      'TotalPrice': 144
+    },
     {
       'Description': 'VMware vSphere 5 : Savoir installer, configurer et administrer',
       'PriceExcludingVat': 176,
