@@ -27,16 +27,22 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 _pdfmake2.default.vfs = _vfs_fonts2.default.pdfMake.vfs;
 
+var methodes = {
+  DOWNLOAD: 'download',
+  VIEW: 'view',
+  PRINT: 'print',
+  BUFFER: 'buffer'
+};
 var billGenerator = exports.billGenerator = function billGenerator(content, destination, method) {
+  if (!method) {
+    throw new Error('Method is not defined');
+  }
   if ((typeof content === 'undefined' ? 'undefined' : _typeof(content)) !== 'object') {
-    var error = { error: 'Content must be an object' };
-    throw error;
+    throw new Error('Content must be an object');
   } else if (typeof destination !== 'string') {
-    var _error = { error: 'Destination must be a string' };
-    throw _error;
+    throw new Error('Destination must be a string');
   } else if (typeof method !== 'string') {
-    var _error2 = { error: 'output Method must be a string' };
-    throw _error2;
+    throw new Error('output Method must be a string');
   }
 
   var DataItems = content.Items.map(function (item) {
@@ -116,7 +122,7 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
             return 0;
           }
         }], [{
-          text: content.BillingAddress.Company + '\n                ' + content.BillingAddress.AddressLine1 + '\n                ' + content.BillingAddress.AddressLine2 + '\n                ' + (content.BillingAddress.PostalCode + ' ' + content.BillingAddress.City + ', ' + content.BillingAddress.Country),
+          text: (content.BillingAddress.Company === null ? '' : content.BillingAddress.Company) + '\n                ' + (content.BillingAddress.AddressLine1 === null ? '' : content.BillingAddress.AddressLine1) + '\n                ' + (content.BillingAddress.AddressLine2 === null ? '' : content.BillingAddress.AddressLine2) + '\n                ' + ((content.BillingAddress.PostalCode === null ? '' : content.BillingAddress.PostalCode) + ' ' + (content.BillingAddress.City === null ? '' : content.BillingAddress.City) + (content.BillingAddress.Country === null ? '' : content.BillingAddress.Country)),
           fontSize: 10,
           border: [false, false, false, false],
           margin: [0, 0, 0, 0],
@@ -221,19 +227,23 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
       }
     }
   };
-
-  if (method === 'download') {
-    _pdfmake2.default.createPdf(docDefinition).download(destination + '.pdf');
-  } else if (method === 'view') {
-    _pdfmake2.default.createPdf(docDefinition).open({}, window);
-  } else if (method === 'print') {
-    _pdfmake2.default.createPdf(docDefinition).print(destination + '.pdf');
-  } else if (method === 'buffer') {
-    _pdfmake2.default.createPdf(docDefinition).getDataUrl(function (result) {
-      docBlob = result;
-    });
-  } else {
-    console.error('Method undefined');
+  switch (method) {
+    case methodes.DOWNLOAD:
+      _pdfmake2.default.createPdf(docDefinition).download(destination + '.pdf');
+      break;
+    case methodes.PRINT:
+      _pdfmake2.default.createPdf(docDefinition).print(destination + '.pdf');
+      break;
+    case methodes.VIEW:
+      _pdfmake2.default.createPdf(docDefinition).open({}, window);
+      break;
+    case methodes.BUFFER:
+      _pdfmake2.default.createPdf(docDefinition).getDataUrl(function (result) {
+        docBlob = result;
+        return docBlob;
+      });
+      break;
+    default:
+      throw new Error('Method undefined');
   }
-  return docBlob;
 };
