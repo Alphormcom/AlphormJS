@@ -1,6 +1,6 @@
 {
   "name": "alphormjs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Alphorm node modules",
   "main": "index.js",
   "scripts": {

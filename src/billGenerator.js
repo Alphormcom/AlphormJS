@@ -5,16 +5,22 @@ import { logo } from './logo'
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs
 
+const methodes = {
+  DOWNLOAD: 'download',
+  VIEW: 'view',
+  PRINT: 'print',
+  BUFFER: 'buffer'
+}
 export const billGenerator = (content, destination, method) => {
+  if (!method) {
+    throw new Error('Method is not defined')
+  }
   if (typeof content !== 'object') {
-    let error = {error: 'Content must be an object'}
-    throw error
+    throw new Error('Content must be an object')
   } else if (typeof destination !== 'string') {
-    let error = {error: 'Destination must be a string'}
-    throw error
+    throw new Error('Destination must be a string')
   } else if (typeof method !== 'string') {
-    let error = {error: 'output Method must be a string'}
-    throw error
+    throw new Error('output Method must be a string')
   }
 
   let DataItems = content.Items.map((item) => [item.Description, (item.Quantity ? item.Quantity : '1'), item.PriceExcludingVat, item.TotalPrice])
@@ -200,19 +206,23 @@ export const billGenerator = (content, destination, method) => {
       }
     }
   }
-
-  if (method === 'download') {
-    pdfMake.createPdf(docDefinition).download(`${destination}.pdf`)
-  } else if (method === 'view') {
-    pdfMake.createPdf(docDefinition).open({}, window)
-  } else if (method === 'print') {
-    pdfMake.createPdf(docDefinition).print(`${destination}.pdf`)
-  } else if (method === 'buffer') {
-    pdfMake.createPdf(docDefinition).getDataUrl(function (result) {
-      docBlob = result
-    })
-  } else {
-    console.error('Method undefined')
+  switch (method) {
+    case methodes.DOWNLOAD:
+      pdfMake.createPdf(docDefinition).download(`${destination}.pdf`)
+      break
+    case methodes.PRINT:
+      pdfMake.createPdf(docDefinition).print(`${destination}.pdf`)
+      break
+    case methodes.VIEW:
+      pdfMake.createPdf(docDefinition).open({}, window)
+      break
+    case methodes.BUFFER:
+      pdfMake.createPdf(docDefinition).getDataUrl(function (result) {
+        docBlob = result
+        return docBlob
+      })
+      break
+    default:
+      throw new Error('Method undefined')
   }
-  return docBlob
 }

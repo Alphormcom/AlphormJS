@@ -68,4 +68,4 @@ const content = {
 }
 const desitination = 'facture-2015'
 
-billGenerator(content, desitination, 'buffer')
+billGenerator(content, desitination, 'download')
