@@ -25,7 +25,7 @@ export const billGenerator = (content, destination, method) => {
 
   let DataItems = content.Items.map((item) => [item.Description, (item.Quantity ? item.Quantity : '1'), item.PriceExcludingVat, item.TotalPrice])
   let docBlob = null
-  const checkNullProperty = (property) => property === null ? property : ''
+  const checkNullProperty = (property) => !property ? '' : property
   let attributes = {
     size: 'A4',
     title: content.OrderNumber,
@@ -220,6 +220,7 @@ export const billGenerator = (content, destination, method) => {
     case methodes.BUFFER:
       pdfMake.createPdf(docDefinition).getDataUrl(function (result) {
         docBlob = result
+        console.log(docBlob)
         return docBlob
       })
       break

@@ -50,7 +50,7 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
   });
   var docBlob = null;
   var checkNullProperty = function checkNullProperty(property) {
-    return property === null ? property : '';
+    return !property ? '' : property;
   };
   var attributes = {
     size: 'A4',
@@ -242,6 +242,7 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
     case methodes.BUFFER:
       _pdfmake2.default.createPdf(docDefinition).getDataUrl(function (result) {
         docBlob = result;
+        console.log(docBlob);
         return docBlob;
       });
       break;
