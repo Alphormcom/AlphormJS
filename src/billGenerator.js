@@ -92,10 +92,10 @@ export const billGenerator = (content, destination, method) => {
               paddingBottom: () => 0
             }],
             [{
-              text: `${content.BillingAddress.Company}
-                ${content.BillingAddress.AddressLine1}
-                ${content.BillingAddress.AddressLine2}
-                ${(content.BillingAddress.PostalCode + ' ' + content.BillingAddress.City + ', ' + content.BillingAddress.Country)}`,
+              text: `${content.BillingAddress.Company === null ? '' : content.BillingAddress.Company}
+                ${content.BillingAddress.AddressLine1 === null ? '' : content.BillingAddress.AddressLine1}
+                ${content.BillingAddress.AddressLine2 === null ? '' : content.BillingAddress.AddressLine2}
+                ${((content.BillingAddress.PostalCode === null ? '' : content.BillingAddress.PostalCode) + ' ' + (content.BillingAddress.City === null ? '' : content.BillingAddress.City) + (content.BillingAddress.Country === null ? '' : content.BillingAddress.Country))}`,
               fontSize: 10,
               border: [false, false, false, false],
               margin: [0, 0, 0, 0],
