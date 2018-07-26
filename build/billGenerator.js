@@ -19,6 +19,8 @@ var _vfs_fonts = require('pdfmake/build/vfs_fonts');
 
 var _vfs_fonts2 = _interopRequireDefault(_vfs_fonts);
 
+var _Helpers = require('./Helpers');
+
 var _logo = require('./logo');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -27,23 +29,29 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 _pdfmake2.default.vfs = _vfs_fonts2.default.pdfMake.vfs;
 
+var methodes = {
+  DOWNLOAD: 'download',
+  VIEW: 'view',
+  PRINT: 'print',
+  BUFFER: 'buffer'
+};
 var billGenerator = exports.billGenerator = function billGenerator(content, destination, method) {
+  if (!method) {
+    throw new Error('Method is not defined');
+  }
   if ((typeof content === 'undefined' ? 'undefined' : _typeof(content)) !== 'object') {
-    var error = { error: 'Content must be an object' };
-    throw error;
+    throw new Error('Content must be an object');
   } else if (typeof destination !== 'string') {
-    var _error = { error: 'Destination must be a string' };
-    throw _error;
+    throw new Error('Destination must be a string');
   } else if (typeof method !== 'string') {
-    var _error2 = { error: 'output Method must be a string' };
-    throw _error2;
+    throw new Error('output Method must be a string');
   }
 
   var DataItems = content.Items.map(function (item) {
     return [item.Description, item.Quantity ? item.Quantity : '1', item.PriceExcludingVat, item.TotalPrice];
   });
   var docBlob = null;
-
+  var Info = content.BillingAddress;
   var attributes = {
     size: 'A4',
     title: content.OrderNumber,
@@ -63,13 +71,12 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
       columns: [{
         image: _logo.logo,
         fit: [200, 80],
-        margin: [20, 0, 20, 40]
+        margin: [20, -15, 20, 40]
       }, {
         width: 200,
         table: {
           widths: [80, 80],
-          margin: [80, 80, 80, 80],
-          body: [[{ text: 'Facture', style: 'label', border: [true, true, false, true] }, { text: content.OrderNumber, style: 'label', border: [false, true, true, true], borderRadius: [50, 50, 50, 50] }], [{ text: 'Date Facturation:', style: 'issueDate', border: [false, false, false, false] }, { text: (0, _moment2.default)(content.IssueDate).format('L'), style: 'issueDate', border: [false, false, false, false] }], [{ text: 'Méthode  :', style: 'paymentMethod', border: [false, false, false, false] }, { text: content.PaymentMethod, style: 'paymentMethod', border: [false, false, false, false] }]]
+          body: [[{ text: 'Facture', style: 'label', border: [true, true, false, true] }, { text: content.OrderNumber, style: 'label', border: [false, true, true, true] }], [{ text: 'Date Facturation:', style: 'issueDate', border: [false, false, false, false] }, { text: (0, _moment2.default)(content.IssueDate).format('L'), style: 'issueDate', border: [false, false, false, false] }], [{ text: 'Méthode  :', style: 'paymentMethod', border: [false, false, false, false] }, { text: content.PaymentMethod, style: 'paymentMethod', border: [false, false, false, false] }]]
         },
         layout: {
           vLineWidth: function vLineWidth() {
@@ -95,7 +102,7 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
         }
       }]
     }, {
-      margin: [18, 0, 0, 0],
+      margin: [18, -70, 0, 20],
       table: {
         body: [[{ text: 'par Alphard Technologies SARL\n 9, rue Charles Fourier\n 91030 Evry', border: [false, false, false, false], bold: true }], [{ text: 'Client :', border: [false, false, false, false], bold: true, fontSize: 14, decoration: 'underline', marginTop: 10 }], [{
           text: '' + (content.User.LastName + ' ' + content.User.FirstName),
@@ -116,56 +123,17 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
             return 0;
           }
         }], [{
-          text: content.BillingAddress.Company + '\n                ' + content.BillingAddress.AddressLine1 + '\n                ' + content.BillingAddress.AddressLine2 + '\n                ' + (content.BillingAddress.PostalCode + ' ' + content.BillingAddress.City + ', ' + content.BillingAddress.Country),
-          fontSize: 10,
-          border: [false, false, false, false],
-          margin: [0, 0, 0, 0],
-          paddingLeft: function paddingLeft() {
-            return 0;
-          },
-          paddingTop: function paddingTop() {
-            return 0;
-          },
-          paddingRight: function paddingRight() {
-            return 0;
-          },
-          paddingBottom: function paddingBottom() {
-            return 0;
-          }
+          text: (0, _Helpers.checkNullProperty)(Info.Company) + '\r' + (0, _Helpers.checkNullProperty)(Info.AddressLine1) + '\r' + (0, _Helpers.checkNullProperty)(Info.AddressLine2) + '\r' + (0, _Helpers.checkNullProperty)(Info.PostalCode) + ' ' + (0, _Helpers.checkNullProperty)(Info.City) + '\r' + (0, _Helpers.checkNullProperty)(Info.State) + ' ' + (0, _Helpers.checkNullProperty)(Info.Country),
+          style: 'UserContactInfo',
+          border: [false, false, false, false]
         }], [{
-          text: 'Email : ' + content.User.Email,
-          fontSize: 10,
-          border: [false, false, false, false],
-          margin: [0, 0, 0, 0],
-          paddingLeft: function paddingLeft() {
-            return 0;
-          },
-          paddingTop: function paddingTop() {
-            return 0;
-          },
-          paddingRight: function paddingRight() {
-            return 0;
-          },
-          paddingBottom: function paddingBottom() {
-            return 0;
-          }
+          text: 'Email: ' + (0, _Helpers.checkNullProperty)(content.User.Email),
+          style: 'UserContactInfo',
+          border: [false, false, false, false]
         }], [{
-          text: (content.User.Phone === null ? '' : 'Téléphone : ' + content.User.Phone) + ' ',
-          fontSize: 10,
-          border: [false, false, false, false],
-          margin: [0, 0, 0, 0],
-          paddingLeft: function paddingLeft() {
-            return 0;
-          },
-          paddingTop: function paddingTop() {
-            return 0;
-          },
-          paddingRight: function paddingRight() {
-            return 0;
-          },
-          paddingBottom: function paddingBottom() {
-            return 0;
-          }
+          text: 'T\xE9l\xE9phone : ' + (0, _Helpers.checkNullProperty)(content.User.Phone) + ' ',
+          style: 'UserContactInfo',
+          border: [false, false, false, false]
         }]]
       }
     }, {
@@ -218,22 +186,42 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
         fontSize: 7,
         margin: [60, 0, 60, 0],
         alignment: 'center'
+      },
+      UserContactInfo: {
+        fontSize: 10,
+        margin: [0, 0, 0, 0],
+        paddingLeft: function paddingLeft() {
+          return 0;
+        },
+        paddingTop: function paddingTop() {
+          return 0;
+        },
+        paddingRight: function paddingRight() {
+          return 0;
+        },
+        paddingBottom: function paddingBottom() {
+          return 0;
+        }
       }
     }
   };
-
-  if (method === 'download') {
-    _pdfmake2.default.createPdf(docDefinition).download(destination + '.pdf');
-  } else if (method === 'view') {
-    _pdfmake2.default.createPdf(docDefinition).open({}, window);
-  } else if (method === 'print') {
-    _pdfmake2.default.createPdf(docDefinition).print(destination + '.pdf');
-  } else if (method === 'buffer') {
-    _pdfmake2.default.createPdf(docDefinition).getDataUrl(function (result) {
-      docBlob = result;
-    });
-  } else {
-    console.error('Method undefined');
+  switch (method) {
+    case methodes.DOWNLOAD:
+      _pdfmake2.default.createPdf(docDefinition).download(destination + '.pdf');
+      break;
+    case methodes.PRINT:
+      _pdfmake2.default.createPdf(docDefinition).print(destination + '.pdf');
+      break;
+    case methodes.VIEW:
+      _pdfmake2.default.createPdf(docDefinition).open({}, window);
+      break;
+    case methodes.BUFFER:
+      _pdfmake2.default.createPdf(docDefinition).getDataUrl(function (result) {
+        docBlob = result;
+        return docBlob;
+      });
+      break;
+    default:
+      throw new Error('Method undefined');
   }
-  return docBlob;
 };

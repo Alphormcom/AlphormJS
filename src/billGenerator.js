@@ -1,6 +1,7 @@
 ﻿import Moment from 'moment'
 import pdfMake from 'pdfmake/build/pdfmake'
 import pdfFonts from 'pdfmake/build/vfs_fonts'
+import {checkNullProperty} from './Helpers'
 import { logo } from './logo'
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs
@@ -25,7 +26,7 @@ export const billGenerator = (content, destination, method) => {
 
   let DataItems = content.Items.map((item) => [item.Description, (item.Quantity ? item.Quantity : '1'), item.PriceExcludingVat, item.TotalPrice])
   let docBlob = null
-
+  let Info = content.BillingAddress
   let attributes = {
     size: 'A4',
     title: content.OrderNumber,
@@ -48,15 +49,14 @@ export const billGenerator = (content, destination, method) => {
           {
             image: logo,
             fit: [200, 80],
-            margin: [20, 0, 20, 40]
+            margin: [20, -15, 20, 40]
           },
           {
             width: 200,
             table: {
               widths: [80, 80],
-              margin: [80, 80, 80, 80],
               body: [
-                [{ text: 'Facture', style: 'label', border: [true, true, false, true] }, { text: content.OrderNumber, style: 'label', border: [false, true, true, true], borderRadius: [50, 50, 50, 50] }],
+                [{ text: 'Facture', style: 'label', border: [true, true, false, true] }, { text: content.OrderNumber, style: 'label', border: [false, true, true, true] }],
                 [{ text: 'Date Facturation:', style: 'issueDate', border: [false, false, false, false] }, { text: Moment(content.IssueDate).format('L'), style: 'issueDate', border: [false, false, false, false] }],
                 [{ text: 'Méthode  :', style: 'paymentMethod', border: [false, false, false, false] }, { text: content.PaymentMethod, style: 'paymentMethod', border: [false, false, false, false] }]
               ]
@@ -75,7 +75,7 @@ export const billGenerator = (content, destination, method) => {
         ]
       },
       {
-        margin: [18, 0, 0, 0],
+        margin: [18, -70, 0, 20],
         table: {
           body: [
             [{ text: 'par Alphard Technologies SARL\n 9, rue Charles Fourier\n 91030 Evry', border: [false, false, false, false], bold: true }],
@@ -92,37 +92,19 @@ export const billGenerator = (content, destination, method) => {
               paddingBottom: () => 0
             }],
             [{
-              text: `${content.BillingAddress.Company}
-                ${content.BillingAddress.AddressLine1}
-                ${content.BillingAddress.AddressLine2}
-                ${(content.BillingAddress.PostalCode + ' ' + content.BillingAddress.City + ', ' + content.BillingAddress.Country)}`,
-              fontSize: 10,
-              border: [false, false, false, false],
-              margin: [0, 0, 0, 0],
-              paddingLeft: () => 0,
-              paddingTop: () => 0,
-              paddingRight: () => 0,
-              paddingBottom: () => 0
+              text: `${checkNullProperty(Info.Company)}\r${checkNullProperty(Info.AddressLine1)}\r${checkNullProperty(Info.AddressLine2)}\r${checkNullProperty(Info.PostalCode)} ${checkNullProperty(Info.City)}\r${checkNullProperty(Info.State)} ${checkNullProperty(Info.Country)}`,
+              style: 'UserContactInfo',
+              border: [false, false, false, false]
             }],
             [{
-              text: `Email : ${content.User.Email}`,
-              fontSize: 10,
-              border: [false, false, false, false],
-              margin: [0, 0, 0, 0],
-              paddingLeft: () => 0,
-              paddingTop: () => 0,
-              paddingRight: () => 0,
-              paddingBottom: () => 0
+              text: `Email: ${checkNullProperty(content.User.Email)}`,
+              style: 'UserContactInfo',
+              border: [false, false, false, false]
             }],
             [{
-              text: `${content.User.Phone === null ? '' : 'Téléphone : ' + content.User.Phone} `,
-              fontSize: 10,
-              border: [false, false, false, false],
-              margin: [0, 0, 0, 0],
-              paddingLeft: () => 0,
-              paddingTop: () => 0,
-              paddingRight: () => 0,
-              paddingBottom: () => 0
+              text: `Téléphone : ${checkNullProperty(content.User.Phone)} `,
+              style: 'UserContactInfo',
+              border: [false, false, false, false]
             }]
           ]
         }
@@ -203,6 +185,14 @@ export const billGenerator = (content, destination, method) => {
         fontSize: 7,
         margin: [60, 0, 60, 0],
         alignment: 'center'
+      },
+      UserContactInfo: {
+        fontSize: 10,
+        margin: [0, 0, 0, 0],
+        paddingLeft: () => 0,
+        paddingTop: () => 0,
+        paddingRight: () => 0,
+        paddingBottom: () => 0
       }
     }
   }

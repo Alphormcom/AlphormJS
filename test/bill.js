@@ -1,4 +1,4 @@
-﻿import {billGenerator} from '../src/billGenerator'
+﻿import {billGenerator} from '../build/billGenerator'
 
 const content = {
   'OrderNumber': 'FA-20187',
@@ -14,13 +14,13 @@ const content = {
     'AddressId': null,
     'Company': 'Alphard Tech, ltd',
     'VatNumber': '145',
-    'AddressLine1': '10, Dar lol test',
-    'AddressLine2': 'Fin Ja had Khina street',
+    'AddressLine1': null,
+    'AddressLine2': null,
     'City': 'RABAT',
     'CountryId': 0,
     'Country': 'France',
     'PostalCode': 27182,
-    'State': 'Grand Casablanca',
+    'State': null,
     'AddressTypeId': 0
   },
   'PriceExcludingVat': 0,
@@ -68,4 +68,4 @@ const content = {
 }
 const desitination = 'facture-2015'
 
-billGenerator(content, desitination, 'download')
+billGenerator(content, desitination, 'buffer')
