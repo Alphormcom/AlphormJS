@@ -3,7 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.billGenerator = undefined;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
@@ -35,7 +34,7 @@ var methodes = {
   PRINT: 'print',
   BUFFER: 'buffer'
 };
-var billGenerator = exports.billGenerator = function billGenerator(content, destination, method) {
+var InvoiceGenerator = function InvoiceGenerator(content, destination, method) {
   if (!method) {
     throw new Error('Method is not defined');
   }
@@ -48,7 +47,7 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
   }
 
   var DataItems = content.Items.map(function (item) {
-    return [item.Description, item.Quantity ? item.Quantity : '1', item.PriceExcludingVat, item.TotalPrice];
+    return [item.Description, item.Quantity ? item.Quantity : '1', item.PriceExcludingVat, item.PriceExcludingVat];
   });
   var docBlob = null;
   var Info = content.BillingAddress;
@@ -73,10 +72,11 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
         fit: [200, 80],
         margin: [20, -15, 20, 40]
       }, {
-        width: 200,
+        width: 180,
+        margin: [-20, 20, 80, 0],
         table: {
-          widths: [80, 80],
-          body: [[{ text: 'Facture', style: 'label', border: [true, true, false, true] }, { text: content.OrderNumber, style: 'label', border: [false, true, true, true] }], [{ text: 'Date Facturation:', style: 'issueDate', border: [false, false, false, false] }, { text: (0, _moment2.default)(content.IssueDate).format('L'), style: 'issueDate', border: [false, false, false, false] }], [{ text: 'Méthode  :', style: 'paymentMethod', border: [false, false, false, false] }, { text: content.PaymentMethod, style: 'paymentMethod', border: [false, false, false, false] }]]
+          widths: ['*', '*'],
+          body: [[{ text: 'Facture', style: 'label', border: [true, true, false, true] }, { text: content.OrderNumber, style: 'InvoiceNumber', border: [false, true, true, true] }], [{ text: 'Date Facturation:', style: 'issueDate', border: [false, false, false, false] }, { text: (0, _moment2.default)(content.IssueDate).format('L'), style: 'issueDate', border: [false, false, false, false] }], [{ text: 'Méthode  :', style: 'paymentMethod', border: [false, false, false, false] }, { text: content.PaymentMethod, style: 'paymentMethod', border: [false, false, false, false] }]]
         },
         layout: {
           vLineWidth: function vLineWidth() {
@@ -102,7 +102,7 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
         }
       }]
     }, {
-      margin: [18, -70, 0, 20],
+      margin: [18, -80, 0, 20],
       table: {
         body: [[{ text: 'par Alphard Technologies SARL\n 9, rue Charles Fourier\n 91030 Evry', border: [false, false, false, false], bold: true }], [{ text: 'Client :', border: [false, false, false, false], bold: true, fontSize: 14, decoration: 'underline', marginTop: 10 }], [{
           text: '' + (content.User.LastName + ' ' + content.User.FirstName),
@@ -141,7 +141,7 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
       table: {
         headerRows: 1,
         widths: ['*', 35, 60, 100],
-        body: [[{ text: 'Article', style: 'tableHeader' }, { text: 'Qté', style: 'tableHeader' }, { text: 'P.U HT (' + (content.Currency === 'EUR' ? '€' : content.Currency) + ')', style: 'tableHeader' }, { text: 'Montant HT (' + (content.Currency === 'EUR' ? '€' : content.Currency) + ')', style: 'tableHeader' }]].concat(_toConsumableArray(DataItems), [[{ text: '', border: [false, false, false, false] }, { colSpan: 2, rowSpan: 1, text: 'Total HT', style: 'tableHeader' }, '', parseFloat(content.PriceExcludingVat).toFixed(2)], [{ text: '', border: [false, false, false, false] }, { colSpan: 2, rowSpan: 1, text: 'Total TVA (20%)', style: 'tableHeader' }, '', parseFloat(content.VatAmount).toFixed(2)], [{ text: '', border: [false, false, false, false] }, { colSpan: 2, rowSpan: 1, text: 'Total TTC (' + (content.Currency === 'EUR' ? '€' : content.Currency) + ')', style: 'tableHeader' }, '', parseFloat(content.TotalPrice).toFixed(2) + content.Currency]])
+        body: [[{ text: 'Article', style: 'tableHeader' }, { text: 'Qté', style: 'tableHeader' }, { text: 'P.U HT (' + (content.Currency === 'EUR' ? '€' : content.Currency) + ')', style: 'tableHeader' }, { text: 'Montant HT (' + (content.Currency === 'EUR' ? '€' : content.Currency) + ')', style: 'tableHeader' }]].concat(_toConsumableArray(DataItems), [[{ text: '', border: [false, false, false, false] }, { colSpan: 2, rowSpan: 1, text: 'Total HT', style: 'tableHeader' }, '', parseFloat(content.PriceExcludingVat).toFixed(2)], [{ text: '', border: [false, false, false, false] }, { colSpan: 2, rowSpan: 1, text: 'Total TVA (20%)', style: 'tableHeader' }, '', parseFloat(content.VatAmount).toFixed(2)], [{ text: '', border: [false, false, false, false] }, { colSpan: 2, rowSpan: 1, text: 'Total TTC (' + (content.Currency === 'EUR' ? '€' : content.Currency) + ')', style: 'tableHeader' }, '', parseFloat(content.TotalPrice).toFixed(2) + (content.Currency === 'EUR' ? '€' : content.Currency)]])
       },
       layout: {
         hLineWidth: function hLineWidth(i, node) {
@@ -168,9 +168,15 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
       label: {
         fillColor: '#dfe6e9',
         bold: true,
-        fontSize: 18,
+        fontSize: 16,
         color: '#727272'
 
+      },
+      InvoiceNumber: {
+        fillColor: '#dfe6e9',
+        bold: true,
+        fontSize: 12,
+        color: '#727272'
       },
       issueDate: {
         fontSize: 10,
@@ -225,3 +231,5 @@ var billGenerator = exports.billGenerator = function billGenerator(content, dest
       throw new Error('Method undefined');
   }
 };
+
+exports.default = InvoiceGenerator;

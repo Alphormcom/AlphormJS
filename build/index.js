@@ -3,12 +3,12 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.billGenerator = undefined;
+exports.InvoiceGenerator = undefined;
 
-var _billGenerator = require('./billGenerator');
+var _InvoiceGenerator = require('./InvoiceGenerator');
 
-var _billGenerator2 = _interopRequireDefault(_billGenerator);
+var _InvoiceGenerator2 = _interopRequireDefault(_InvoiceGenerator);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.billGenerator = _billGenerator2.default;
+exports.InvoiceGenerator = _InvoiceGenerator2.default;

@@ -12,7 +12,7 @@ const methodes = {
   PRINT: 'print',
   BUFFER: 'buffer'
 }
-export const billGenerator = (content, destination, method) => {
+const InvoiceGenerator = (content, destination, method) => {
   if (!method) {
     throw new Error('Method is not defined')
   }
@@ -24,7 +24,7 @@ export const billGenerator = (content, destination, method) => {
     throw new Error('output Method must be a string')
   }
 
-  let DataItems = content.Items.map((item) => [item.Description, (item.Quantity ? item.Quantity : '1'), item.PriceExcludingVat, item.TotalPrice])
+  let DataItems = content.Items.map((item) => [item.Description, (item.Quantity ? item.Quantity : '1'), item.PriceExcludingVat, item.PriceExcludingVat])
   let docBlob = null
   let Info = content.BillingAddress
   let attributes = {
@@ -52,11 +52,12 @@ export const billGenerator = (content, destination, method) => {
             margin: [20, -15, 20, 40]
           },
           {
-            width: 200,
+            width: 180,
+            margin: [-20, 20, 80, 0],
             table: {
-              widths: [80, 80],
+              widths: ['*', '*'],
               body: [
-                [{ text: 'Facture', style: 'label', border: [true, true, false, true] }, { text: content.OrderNumber, style: 'label', border: [false, true, true, true] }],
+                [{ text: 'Facture', style: 'label', border: [true, true, false, true] }, { text: content.OrderNumber, style: 'InvoiceNumber', border: [false, true, true, true] }],
                 [{ text: 'Date Facturation:', style: 'issueDate', border: [false, false, false, false] }, { text: Moment(content.IssueDate).format('L'), style: 'issueDate', border: [false, false, false, false] }],
                 [{ text: 'Méthode  :', style: 'paymentMethod', border: [false, false, false, false] }, { text: content.PaymentMethod, style: 'paymentMethod', border: [false, false, false, false] }]
               ]
@@ -75,7 +76,7 @@ export const billGenerator = (content, destination, method) => {
         ]
       },
       {
-        margin: [18, -70, 0, 20],
+        margin: [18, -80, 0, 20],
         table: {
           body: [
             [{ text: 'par Alphard Technologies SARL\n 9, rue Charles Fourier\n 91030 Evry', border: [false, false, false, false], bold: true }],
@@ -137,7 +138,7 @@ export const billGenerator = (content, destination, method) => {
               { text: '', border: [false, false, false, false] },
               { colSpan: 2, rowSpan: 1, text: `Total TTC (${content.Currency === 'EUR' ? '€' : content.Currency})`, style: 'tableHeader' },
               '',
-              parseFloat(content.TotalPrice).toFixed(2) + content.Currency]
+              parseFloat(content.TotalPrice).toFixed(2) + (content.Currency === 'EUR' ? '€' : content.Currency)]
           ]
         },
         layout: {
@@ -167,9 +168,15 @@ export const billGenerator = (content, destination, method) => {
       label: {
         fillColor: '#dfe6e9',
         bold: true,
-        fontSize: 18,
+        fontSize: 16,
         color: '#727272'
 
+      },
+      InvoiceNumber: {
+        fillColor: '#dfe6e9',
+        bold: true,
+        fontSize: 12,
+        color: '#727272'
       },
       issueDate: {
         fontSize: 10,
@@ -216,3 +223,5 @@ export const billGenerator = (content, destination, method) => {
       throw new Error('Method undefined')
   }
 }
+
+export default InvoiceGenerator
