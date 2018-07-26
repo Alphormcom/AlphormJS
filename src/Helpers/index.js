@@ -1,1 +1,1 @@
-export const checkNullProperty = (property) => !property ? '' : property
+export const checkNullProperty = (property) => !property ? '\0' : property

@@ -1,4 +1,4 @@
-﻿import {billGenerator} from '../src/billGenerator'
+﻿import {billGenerator} from '../build/billGenerator'
 
 const content = {
   'OrderNumber': 'FA-20187',
