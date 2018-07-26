@@ -1,5 +1,5 @@
-import billGenerator from './billGenerator'
+import InvoiceGenerator from './InvoiceGenerator'
 
 export {
-  billGenerator
+  InvoiceGenerator
 }

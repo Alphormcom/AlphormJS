@@ -1,4 +1,4 @@
-﻿import {billGenerator} from '../build'
+﻿import {InvoiceGenerator} from '../build'
 
 const content = {
   'OrderNumber': 'FA-2018-15896',
@@ -44,4 +44,4 @@ const content = {
 }
 const desitination = 'facture-2015'
 
-billGenerator(content, desitination, 'buffer')
+InvoiceGenerator(content, desitination, 'buffer')

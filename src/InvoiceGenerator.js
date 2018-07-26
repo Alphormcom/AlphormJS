@@ -12,7 +12,7 @@ const methodes = {
   PRINT: 'print',
   BUFFER: 'buffer'
 }
-const billGenerator = (content, destination, method) => {
+const InvoiceGenerator = (content, destination, method) => {
   if (!method) {
     throw new Error('Method is not defined')
   }
@@ -224,4 +224,4 @@ const billGenerator = (content, destination, method) => {
   }
 }
 
-export default billGenerator
+export default InvoiceGenerator

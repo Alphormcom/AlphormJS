@@ -34,7 +34,7 @@ var methodes = {
   PRINT: 'print',
   BUFFER: 'buffer'
 };
-var billGenerator = function billGenerator(content, destination, method) {
+var InvoiceGenerator = function InvoiceGenerator(content, destination, method) {
   if (!method) {
     throw new Error('Method is not defined');
   }
@@ -224,7 +224,6 @@ var billGenerator = function billGenerator(content, destination, method) {
     case methodes.BUFFER:
       _pdfmake2.default.createPdf(docDefinition).getDataUrl(function (result) {
         docBlob = result;
-        console.log(docBlob);
         return docBlob;
       });
       break;
@@ -233,4 +232,4 @@ var billGenerator = function billGenerator(content, destination, method) {
   }
 };
 
-exports.default = billGenerator;
+exports.default = InvoiceGenerator;
