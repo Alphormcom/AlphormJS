@@ -116,3 +116,4 @@ $RECYCLE.BIN/
 facture.txt
 src/test.js
 build/test.js
+test/test.js
