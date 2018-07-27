@@ -64,23 +64,3 @@ export const content = {
     }
   ]
 }
-
-let UserBillingInfo = content.BillingAddress
-
-const CleanUserInfo = (obj) => {
-  let CleanedInfo = {}
-  Object.keys(obj).forEach((prop) => {
-    if (obj[prop]) { CleanedInfo[prop] = obj[prop] }
-  })
-  return CleanedInfo
-}
-
-let CleanedInfo = CleanUserInfo(UserBillingInfo)
-// console.warn(CleanedInfo)
-
-function formatedAd () {
-  for (let prop in CleanedInfo) {
-    console.log([{ text: CleanedInfo[prop] }])
-  }
-}
-// console.log(formatedAd()) //

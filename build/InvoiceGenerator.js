@@ -122,15 +122,15 @@ var InvoiceGenerator = function InvoiceGenerator(content, destination, method) {
             return 0;
           }
         }], [{
-          text: (0, _Helpers.checkNullProperty)(Info.Company) + '\r' + (0, _Helpers.checkNullProperty)(Info.AddressLine1) + '\r' + (0, _Helpers.checkNullProperty)(Info.AddressLine2) + '\r' + (0, _Helpers.checkNullProperty)(Info.PostalCode) + ' ' + (0, _Helpers.checkNullProperty)(Info.City) + '\r' + (0, _Helpers.checkNullProperty)(Info.State) + ' ' + (0, _Helpers.checkNullProperty)(Info.Country),
+          text: (0, _Helpers.SafeCastToString)(Info.Company) + '\r' + (0, _Helpers.SafeCastToString)(Info.AddressLine1) + '\r' + (0, _Helpers.SafeCastToString)(Info.AddressLine2) + '\r' + (0, _Helpers.SafeCastToString)(Info.PostalCode) + ' ' + (0, _Helpers.SafeCastToString)(Info.City) + '\r' + (0, _Helpers.SafeCastToString)(Info.State) + ' ' + (0, _Helpers.SafeCastToString)(Info.Country),
           style: 'UserContactInfo',
           border: [false, false, false, false]
         }], [{
-          text: 'Email: ' + (0, _Helpers.checkNullProperty)(content.User.Email),
+          text: 'Email: ' + (0, _Helpers.SafeCastToString)(content.User.Email),
           style: 'UserContactInfo',
           border: [false, false, false, false]
         }], [{
-          text: 'T\xE9l\xE9phone : ' + (0, _Helpers.checkNullProperty)(content.User.Phone) + ' ',
+          text: 'T\xE9l\xE9phone : ' + (0, _Helpers.SafeCastToString)(content.User.Phone) + ' ',
           style: 'UserContactInfo',
           border: [false, false, false, false]
         }]]
@@ -139,7 +139,7 @@ var InvoiceGenerator = function InvoiceGenerator(content, destination, method) {
       style: 'pageStyle',
       table: {
         headerRows: 1,
-        widths: ['*', 35, 60, 100],
+        widths: ['*', '*', 60, 100],
         body: [[{ text: 'Article', style: 'tableHeader', border: [true, true, false, true], colSpan: 2 }, { text: '', border: [false, true, false, true], style: 'tableHeader' }, { text: '', border: [false, true, false, false], style: 'tableHeader' }, { text: 'Montant HT (' + (content.Currency === 'EUR' ? '€' : content.Currency) + ')', style: 'tableHeader' }]].concat(_toConsumableArray(DataItems), [[{ text: '', border: [false, false, false, false] }, { colSpan: 2, rowSpan: 1, text: 'Total HT', style: 'tableHeader' }, '', parseFloat(content.PriceExcludingVat).toFixed(2)], [{ text: '', border: [false, false, false, false] }, { colSpan: 2, rowSpan: 1, text: 'Total TVA (20%)', style: 'tableHeader' }, '', parseFloat(content.VatAmount).toFixed(2)], [{ text: '', border: [false, false, false, false] }, { colSpan: 2, rowSpan: 1, text: 'Total TTC (' + (content.Currency === 'EUR' ? '€' : content.Currency) + ')', style: 'tableHeader' }, '', parseFloat(content.TotalPrice).toFixed(2) + (content.Currency === 'EUR' ? '€' : content.Currency)]])
       },
       layout: {
@@ -215,7 +215,9 @@ var InvoiceGenerator = function InvoiceGenerator(content, destination, method) {
       _pdfmake2.default.createPdf(docDefinition).download(destination + '.pdf');
       break;
     case methodes.PRINT:
-      _pdfmake2.default.createPdf(docDefinition).print(destination + '.pdf');
+      _pdfmake2.default.createPdf(docDefinition).print({
+        options: { autoPrint: true }
+      }, destination + '.pdf');
       break;
     case methodes.VIEW:
       _pdfmake2.default.createPdf(docDefinition).open({}, window);
