@@ -44,4 +44,4 @@ const content = {
 }
 const desitination = 'facture-2015'
 
-InvoiceGenerator(content, desitination, 'buffer')
+InvoiceGenerator(content, desitination, 'print')

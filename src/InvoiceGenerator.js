@@ -1,7 +1,7 @@
 ﻿import Moment from 'moment'
 import pdfMake from 'pdfmake/build/pdfmake'
 import pdfFonts from 'pdfmake/build/vfs_fonts'
-import {checkNullProperty} from './Helpers'
+import { SafeCastToString } from './Helpers'
 import { logo } from './logo'
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs
@@ -24,8 +24,7 @@ const InvoiceGenerator = (content, destination, method) => {
     throw new Error('output Method must be a string')
   }
 
-  let DataItems = content.Items.map((item) => [item.Description, (item.Quantity ? item.Quantity : '1'), item.PriceExcludingVat, item.PriceExcludingVat])
-  let docBlob = null
+  let DataItems = content.Items.map((item) => [{ text: item.Description, colSpan: 3 }, '', '', item.PriceExcludingVat])
   let Info = content.BillingAddress
   let attributes = {
     size: 'A4',
@@ -93,17 +92,17 @@ const InvoiceGenerator = (content, destination, method) => {
               paddingBottom: () => 0
             }],
             [{
-              text: `${checkNullProperty(Info.Company)}\r${checkNullProperty(Info.AddressLine1)}\r${checkNullProperty(Info.AddressLine2)}\r${checkNullProperty(Info.PostalCode)} ${checkNullProperty(Info.City)}\r${checkNullProperty(Info.State)} ${checkNullProperty(Info.Country)}`,
+              text: `${SafeCastToString(Info.Company)}\r${SafeCastToString(Info.AddressLine1)}\r${SafeCastToString(Info.AddressLine2)}\r${SafeCastToString(Info.PostalCode)} ${SafeCastToString(Info.City)}\r${SafeCastToString(Info.State)} ${SafeCastToString(Info.Country)}`,
               style: 'UserContactInfo',
               border: [false, false, false, false]
             }],
             [{
-              text: `Email: ${checkNullProperty(content.User.Email)}`,
+              text: `Email: ${SafeCastToString(content.User.Email)}`,
               style: 'UserContactInfo',
               border: [false, false, false, false]
             }],
             [{
-              text: `Téléphone : ${checkNullProperty(content.User.Phone)} `,
+              text: `Téléphone : ${SafeCastToString(content.User.Phone)} `,
               style: 'UserContactInfo',
               border: [false, false, false, false]
             }]
@@ -114,12 +113,12 @@ const InvoiceGenerator = (content, destination, method) => {
         style: 'pageStyle',
         table: {
           headerRows: 1,
-          widths: ['*', 35, 60, 100],
+          widths: ['*', '*', 60, 100],
           body: [
             [
-              { text: 'Article', style: 'tableHeader' },
-              { text: 'Qté', style: 'tableHeader' },
-              { text: `P.U HT (${content.Currency === 'EUR' ? '€' : content.Currency})`, style: 'tableHeader' },
+              { text: 'Article', style: 'tableHeader', border: [true, true, false, true], colSpan: 2 },
+              { text: '', border: [false, true, false, true], style: 'tableHeader' },
+              { text: '', border: [false, true, false, false], style: 'tableHeader' },
               { text: `Montant HT (${content.Currency === 'EUR' ? '€' : content.Currency})`, style: 'tableHeader' }],
             ...DataItems,
             [
@@ -208,16 +207,12 @@ const InvoiceGenerator = (content, destination, method) => {
       pdfMake.createPdf(docDefinition).download(`${destination}.pdf`)
       break
     case methodes.PRINT:
-      pdfMake.createPdf(docDefinition).print(`${destination}.pdf`)
+      pdfMake.createPdf(docDefinition).print({
+        options: { autoPrint: true }
+      }, `${destination}.pdf`)
       break
     case methodes.VIEW:
       pdfMake.createPdf(docDefinition).open({}, window)
-      break
-    case methodes.BUFFER:
-      pdfMake.createPdf(docDefinition).getDataUrl(function (result) {
-        docBlob = result
-        return docBlob
-      })
       break
     default:
       throw new Error('Method undefined')
