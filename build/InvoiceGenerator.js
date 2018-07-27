@@ -221,13 +221,6 @@ var InvoiceGenerator = function InvoiceGenerator(content, destination, method) {
     case methodes.VIEW:
       _pdfmake2.default.createPdf(docDefinition).open({}, window);
       break;
-    case methodes.BUFFER:
-      _pdfmake2.default.createPdf(docDefinition).getDataUrl(function (result) {
-        docBlob = result;
-        console.log(docBlob);
-        return docBlob;
-      });
-      break;
     default:
       throw new Error('Method undefined');
   }

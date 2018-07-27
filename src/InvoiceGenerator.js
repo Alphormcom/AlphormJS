@@ -213,13 +213,6 @@ const InvoiceGenerator = (content, destination, method) => {
     case methodes.VIEW:
       pdfMake.createPdf(docDefinition).open({}, window)
       break
-    case methodes.BUFFER:
-      pdfMake.createPdf(docDefinition).getDataUrl(function (result) {
-        docBlob = result
-        console.log(docBlob)
-        return docBlob
-      })
-      break
     default:
       throw new Error('Method undefined')
   }
