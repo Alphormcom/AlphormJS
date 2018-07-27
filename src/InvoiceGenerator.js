@@ -24,7 +24,7 @@ const InvoiceGenerator = (content, destination, method) => {
     throw new Error('output Method must be a string')
   }
 
-  let DataItems = content.Items.map((item) => [item.Description, (item.Quantity ? item.Quantity : '1'), item.PriceExcludingVat, item.PriceExcludingVat])
+  let DataItems = content.Items.map((item) => [{ text: item.Description, colSpan: 3 }, '', '', item.PriceExcludingVat])
   let docBlob = null
   let Info = content.BillingAddress
   let attributes = {
@@ -117,9 +117,9 @@ const InvoiceGenerator = (content, destination, method) => {
           widths: ['*', 35, 60, 100],
           body: [
             [
-              { text: 'Article', style: 'tableHeader' },
-              { text: 'Qté', style: 'tableHeader' },
-              { text: `P.U HT (${content.Currency === 'EUR' ? '€' : content.Currency})`, style: 'tableHeader' },
+              { text: 'Article', style: 'tableHeader', border: [true, true, false, true], colSpan: 2 },
+              { text: '', border: [false, true, false, true], style: 'tableHeader' },
+              { text: '', border: [false, true, false, false], style: 'tableHeader' },
               { text: `Montant HT (${content.Currency === 'EUR' ? '€' : content.Currency})`, style: 'tableHeader' }],
             ...DataItems,
             [
@@ -216,6 +216,7 @@ const InvoiceGenerator = (content, destination, method) => {
     case methodes.BUFFER:
       pdfMake.createPdf(docDefinition).getDataUrl(function (result) {
         docBlob = result
+        console.log(docBlob)
         return docBlob
       })
       break

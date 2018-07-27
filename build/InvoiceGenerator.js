@@ -47,7 +47,7 @@ var InvoiceGenerator = function InvoiceGenerator(content, destination, method) {
   }
 
   var DataItems = content.Items.map(function (item) {
-    return [item.Description, item.Quantity ? item.Quantity : '1', item.PriceExcludingVat, item.PriceExcludingVat];
+    return [{ text: item.Description, colSpan: 3 }, '', '', item.PriceExcludingVat];
   });
   var docBlob = null;
   var Info = content.BillingAddress;
@@ -141,7 +141,7 @@ var InvoiceGenerator = function InvoiceGenerator(content, destination, method) {
       table: {
         headerRows: 1,
         widths: ['*', 35, 60, 100],
-        body: [[{ text: 'Article', style: 'tableHeader' }, { text: 'Qté', style: 'tableHeader' }, { text: 'P.U HT (' + (content.Currency === 'EUR' ? '€' : content.Currency) + ')', style: 'tableHeader' }, { text: 'Montant HT (' + (content.Currency === 'EUR' ? '€' : content.Currency) + ')', style: 'tableHeader' }]].concat(_toConsumableArray(DataItems), [[{ text: '', border: [false, false, false, false] }, { colSpan: 2, rowSpan: 1, text: 'Total HT', style: 'tableHeader' }, '', parseFloat(content.PriceExcludingVat).toFixed(2)], [{ text: '', border: [false, false, false, false] }, { colSpan: 2, rowSpan: 1, text: 'Total TVA (20%)', style: 'tableHeader' }, '', parseFloat(content.VatAmount).toFixed(2)], [{ text: '', border: [false, false, false, false] }, { colSpan: 2, rowSpan: 1, text: 'Total TTC (' + (content.Currency === 'EUR' ? '€' : content.Currency) + ')', style: 'tableHeader' }, '', parseFloat(content.TotalPrice).toFixed(2) + (content.Currency === 'EUR' ? '€' : content.Currency)]])
+        body: [[{ text: 'Article', style: 'tableHeader', border: [true, true, false, true], colSpan: 2 }, { text: '', border: [false, true, false, true], style: 'tableHeader' }, { text: '', border: [false, true, false, false], style: 'tableHeader' }, { text: 'Montant HT (' + (content.Currency === 'EUR' ? '€' : content.Currency) + ')', style: 'tableHeader' }]].concat(_toConsumableArray(DataItems), [[{ text: '', border: [false, false, false, false] }, { colSpan: 2, rowSpan: 1, text: 'Total HT', style: 'tableHeader' }, '', parseFloat(content.PriceExcludingVat).toFixed(2)], [{ text: '', border: [false, false, false, false] }, { colSpan: 2, rowSpan: 1, text: 'Total TVA (20%)', style: 'tableHeader' }, '', parseFloat(content.VatAmount).toFixed(2)], [{ text: '', border: [false, false, false, false] }, { colSpan: 2, rowSpan: 1, text: 'Total TTC (' + (content.Currency === 'EUR' ? '€' : content.Currency) + ')', style: 'tableHeader' }, '', parseFloat(content.TotalPrice).toFixed(2) + (content.Currency === 'EUR' ? '€' : content.Currency)]])
       },
       layout: {
         hLineWidth: function hLineWidth(i, node) {
@@ -224,6 +224,7 @@ var InvoiceGenerator = function InvoiceGenerator(content, destination, method) {
     case methodes.BUFFER:
       _pdfmake2.default.createPdf(docDefinition).getDataUrl(function (result) {
         docBlob = result;
+        console.log(docBlob);
         return docBlob;
       });
       break;
