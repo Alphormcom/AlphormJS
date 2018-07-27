@@ -25,7 +25,6 @@ const InvoiceGenerator = (content, destination, method) => {
   }
 
   let DataItems = content.Items.map((item) => [{ text: item.Description, colSpan: 3 }, '', '', item.PriceExcludingVat])
-  let docBlob = null
   let Info = content.BillingAddress
   let attributes = {
     size: 'A4',

@@ -1,10 +1,8 @@
 /* global describe, it, expect */
-import {billGenerator} from '../build/generator'
-
+import {InvoiceGenerator} from '../build'
+import { content } from './TestContent'
 describe('Generate PDF', () => {
-  const billData = { content: 'This is an sample PDF printed with pdfMake' }
-
-  it('SHould generate a pdf', () => {
-    expect(billGenerator(billData, 'bill')).toBeCalled()
+  it('SHould throw generate an error', () => {
+    expect(InvoiceGenerator(content, 'bill', 'download')).toBeFalsy()
   })
 })

@@ -49,7 +49,6 @@ var InvoiceGenerator = function InvoiceGenerator(content, destination, method) {
   var DataItems = content.Items.map(function (item) {
     return [{ text: item.Description, colSpan: 3 }, '', '', item.PriceExcludingVat];
   });
-  var docBlob = null;
   var Info = content.BillingAddress;
   var attributes = {
     size: 'A4',
